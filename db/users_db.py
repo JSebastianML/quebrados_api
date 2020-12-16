@@ -39,12 +39,6 @@ def get_user(user: str):
     else:
         return None
 
-def get_user_total(user: str):
-    if user in database_users.keys():
-        return database_users[user].total
-    else:
-        return None
-
 def update_user(user_db: db_user):
     database_users[user_db.user] = user_db
     return user_db
