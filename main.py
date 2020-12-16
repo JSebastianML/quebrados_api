@@ -1,7 +1,7 @@
 from models.model_reg import RegisterIn, RegisterOut
 from models.model_user import UserIn, UserOut
 from db.users_db import db_user
-from db.users_db import get_user, get_user_total, update_user
+from db.users_db import get_user, update_user
 from db.reg_db import bd_register
 from db.reg_db import save_register, find_register
 from fastapi import FastAPI, HTTPException
@@ -73,3 +73,5 @@ async def obtener_saldo(user: str):
     usuario = get_user(user)
     usuario= UserOut(**usuario.dict())
     return usuario
+
+
