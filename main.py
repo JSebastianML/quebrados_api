@@ -70,5 +70,6 @@ async def autentication(datos_entrada: UserIn):
 
 @quebrados_app.get("/user/dashboard/{user}")
 async def obtener_saldo(user: str):
-    neto = get_user_total(user)
-    return {"neto": neto}
+    usuario = get_user(user)
+    usuario= UserOut(**usuario.dict())
+    return usuario
