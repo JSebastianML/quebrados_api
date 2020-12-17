@@ -1,7 +1,7 @@
 from models.model_reg import RegisterIn, RegisterOut
-from models.model_user import UserIn, UserOut
+from models.model_user import UserIn, UserOut, CreateUser
 from db.users_db import db_user
-from db.users_db import get_user, update_user
+from db.users_db import get_user, update_user, create_user_indb
 from db.reg_db import bd_register
 from db.reg_db import save_register, find_register
 from fastapi import FastAPI, HTTPException
@@ -69,9 +69,17 @@ async def autentication(datos_entrada: UserIn):
         return {"respuesta": False}
 
 @quebrados_app.get("/user/dashboard/{user}")
-async def obtener_saldo(user: str):
+async def get_total(user: str):
     usuario = get_user(user)
     usuario= UserOut(**usuario.dict())
     return usuario
 
-
+@quebrados_app.post("/user/register")
+async def create_user(datosRegistro: CreateUser):
+    user_exists = get_user(datosRegistro.name)
+    if (user_exists!=None):
+        return {"respuesta": "Lo sentimos, el nombre de usuario ya está en uso"}
+    else:
+        datosRegistro=db_user(**datosRegistro.dict(), total=0)
+        create_user_indb(datosRegistro)
+        return {"respuesta": "El usuario se registró correctamente. Por favor ingresa a continuación con tu nuevo usuario y contraseña"}
