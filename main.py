@@ -11,7 +11,7 @@ quebrados_app = FastAPI()
 
 origins = [
     "http://localhost.tiangolo.com", "https://localhost.tiangolo.com",
-    "http://localhost", "http://localhost:8080",
+    "http://localhost", "http://localhost:8080", "https://quebrados-app12.herokuapp.com",
 ]
 
 quebrados_app.add_middleware(
