@@ -29,7 +29,11 @@ database_users = {
     "krls82": db_user(**{"user":"krls82",
                         "name":"Carlos Cortes Sanchez",  
                         "password":"2011",
-                        "total":3000000})
+                        "total":3000000}),
+    "rosana": db_user(**{"user":"rosana",
+                        "name":"Rosana Rodríguez",  
+                        "password":"shakira2020",
+                        "total":50})
 }
 
 #database_users.keys() --> lista de las llaves del diccionari de arriba
