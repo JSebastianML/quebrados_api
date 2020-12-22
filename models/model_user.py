@@ -4,7 +4,7 @@ class UserIn(BaseModel):
     user: str
     password: str
 
-class CreateUser(BaseModel):
+class CreateUserIn(BaseModel):
     user: str
     name: str
     password: str

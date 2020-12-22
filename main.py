@@ -1,9 +1,9 @@
-from models.model_reg import RegisterIn, RegisterOut
-from models.model_user import UserIn, UserOut, CreateUser
+from models.model_reg import RegisterIn, RegisterOut, deleteRegisterIn
+from models.model_user import UserIn, UserOut, CreateUserIn
 from db.users_db import db_user
-from db.users_db import get_user, update_user, create_user_indb
+from db.users_db import get_user, update_user, create_user_indb, eliminar_usuario
 from db.reg_db import bd_register
-from db.reg_db import save_register, find_register
+from db.reg_db import save_register, find_register, delete_register, delete_user_registers, check_register, find_one_register
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -75,7 +75,7 @@ async def get_total(user: str):
     return usuario
 
 @quebrados_app.post("/user/register")
-async def create_user(datosRegistro: CreateUser):
+async def create_user(datosRegistro: CreateUserIn):
     user_exists = get_user(datosRegistro.name)
     if (user_exists!=None):
         return {"respuesta": "Lo sentimos, el nombre de usuario ya está en uso"}
@@ -83,3 +83,58 @@ async def create_user(datosRegistro: CreateUser):
         datosRegistro=db_user(**datosRegistro.dict(), total=0)
         create_user_indb(datosRegistro)
         return {"respuesta": "El usuario se registró correctamente. Por favor ingresa a continuación con tu nuevo usuario y contraseña"}
+
+@quebrados_app.delete("/user/options/{user}")
+async def delete_user(user: str):
+    user_exists = get_user(user)
+    if (user_exists!=None):
+        eliminar_usuario(user)
+        return {"respuesta": "El usuario y sus registros fueron eliminados"}
+    else:
+        return {"respuesta": "El usuario no existe"}
+        
+
+@quebrados_app.post("/register/delete")
+async def delete_reg(datos: deleteRegisterIn):
+    bandera = check_register(datos.user, datos.id_register)
+    user_exists = get_user(datos.user)
+    registro_aux = find_one_register(datos.id_register)
+
+    if (bandera == True):
+        if registro_aux.category == "ingreso":
+            user_exists.total = user_exists.total - registro_aux.value
+        elif registro_aux.category == "egreso":
+            user_exists.total = user_exists.total + registro_aux.value
+
+        update_user(user_exists)
+
+        delete_register(datos.id_register)
+        return {"respuesta":"Registo eliminado con éxito"}
+    else:
+        return {"respuesta":"el usuario "+datos.user+" no tiene registros con id "+str(datos.id_register)}
+
+
+"""
+@quebrados_app.get("/user/stats/{user}")
+async def get_incomes_exp(user: str):
+    user_exists = get_user(user)
+
+    if user_exists==None:
+        raise HTTPException(status_code=404, detail="El usuario no está registrado")
+
+    match_list = find_register(user_exists.user) 
+
+    cant_ingresos=0
+    cant_egresos=0
+
+    for reg in match_list:
+        if(reg.category=="ingreso"):
+            cant_ingresos+=1
+        elif(reg.category=="egreso"):
+            cant_egresos+=1
+    
+    total_ingresos=((cant_ingresos)/len(match_list))*100
+    total_egresos=((cant_egresos)/len(match_list))*100
+
+    return {"ingresos":total_ingresos, "egresos":total_egresos}
+"""

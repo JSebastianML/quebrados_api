@@ -7,6 +7,10 @@ class RegisterIn(BaseModel):
     concept : str
     value : int
 
+class deleteRegisterIn(BaseModel):
+    id_register : int
+    user: str
+
 class RegisterOut(BaseModel):
     id_register : int
     user : str
